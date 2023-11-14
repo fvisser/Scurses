@@ -28,7 +28,7 @@ class Varying[T](initialValue: T) {
 
   def :=(newValue: T): Varying[T] = {
     storedValue = newValue
-    for (callback <- callbacks) callback()
+    for callback <- callbacks do callback()
     this
   }
 

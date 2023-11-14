@@ -41,7 +41,7 @@ final case class Frame(title: Option[String] = None,
   resize(screen.size)
 
   def innerWidth  = width
-  def innerHeight = height - (if (debug.value) 1 else 0) - (if (title.isDefined) titleOffset else 0)
+  def innerHeight = height - (if debug.value then 1 else 0) - (if title.isDefined then titleOffset else 0)
 
   var lastKeypress = -1
 
@@ -51,7 +51,7 @@ final case class Frame(title: Option[String] = None,
   }
 
   def clear(): Unit =
-    for (y <- 0 until height)
+    for y <- 0 until height do
       screen.put(0, y, " " * width, background = currentTheme.background)
 
   def switchFocusTo(panel: FramePanel): Unit = {
@@ -66,7 +66,7 @@ final case class Frame(title: Option[String] = None,
     val tree = panel.getTreeWalk
 
     var k = screen.keypress()
-    while (k != Keys.ESC && k != Keys.CTRL_C) {
+    while k != Keys.ESC && k != Keys.CTRL_C do {
       lastKeypress = k
       k match {
         case Keys.RESIZE =>
@@ -76,16 +76,16 @@ final case class Frame(title: Option[String] = None,
           panel.markAllForRedraw()
         case Keys.UP =>
           val l = panel.widgets.length
-          if (l > 0) {
-            if (!focusedPanel.focusPreviousWidget) {
+          if l > 0 then {
+            if !focusedPanel.focusPreviousWidget then {
               val next = focusedPanel.getNextDirection(_.top, _.left)
               next foreach (panel => switchFocusTo(panel))
             }
           }
         case Keys.DOWN =>
           val l = panel.widgets.length
-          if (l > 0) {
-            if (!focusedPanel.focusNextWidget) {
+          if l > 0 then {
+            if !focusedPanel.focusNextWidget then {
               val next = focusedPanel.getNextDirection(_.bottom, _.left)
               next foreach (panel => switchFocusTo(panel))
             }
@@ -99,13 +99,13 @@ final case class Frame(title: Option[String] = None,
         case Keys.CTRL_SPACE =>
           focusedPanel.nextTab()
         case k if k == Keys.TAB || k == Keys.SHIFT_TAB =>
-          val t    = if (k == Keys.TAB) tree else tree.reverse
+          val t    = if k == Keys.TAB then tree else tree.reverse
           val next = t.dropWhile(_.id != focusedPanel.id).tail.headOption
           next match {
             case Some(panel) =>
               switchFocusTo(panel)
             case None =>
-              if (k == Keys.TAB)
+              if k == Keys.TAB then
                 switchFocusTo(panel)
               else
                 switchFocusTo(tree.last)
@@ -123,25 +123,25 @@ final case class Frame(title: Option[String] = None,
 
   override def redraw(): Unit =
     this.synchronized {
-      if (!debug.value)
+      if !debug.value then
         draw()
       else {
         val start = System.currentTimeMillis
         draw()
         val ms = System.currentTimeMillis - start
 
-        val key    = if (lastKeypress >= 0) s"Keypress: $lastKeypress (${Keys.repr(lastKeypress)})" else "No key pressed"
+        val key    = if lastKeypress >= 0 then s"Keypress: $lastKeypress (${Keys.repr(lastKeypress)})" else "No key pressed"
         val time   = s"Render time: ${ms}ms"
         val left   = "%-24s | %-19s".format(key, time)
-        val widget = if (focusedPanel.widgets.isEmpty) "Ø" else focusedPanel.widgets(focusedPanel.widgetFocus)
+        val widget = if focusedPanel.widgets.isEmpty then "Ø" else focusedPanel.widgets(focusedPanel.widgetFocus)
         val right  = s"Panel $focusedPanel, $widget"
         val n      = innerWidth + 1 - left.length
         val line   = s"%s%${n}s".format(left, right)
 
-        if (title.isDefined) screen.translateOffset(y = titleOffset)
+        if title.isDefined then screen.translateOffset(y = titleOffset)
         screen.put(0, innerHeight + 1, line, foreground = currentTheme.foreground, background = currentTheme.background)
         panel.drawDebug(currentTheme)
-        if (title.isDefined) screen.translateOffset(y = -titleOffset)
+        if title.isDefined then screen.translateOffset(y = -titleOffset)
 
       }
       screen.refresh()
@@ -149,10 +149,10 @@ final case class Frame(title: Option[String] = None,
 
   def draw(): Unit = {
     screen.hideCursor()
-    if (title.isDefined) screen.translateOffset(y = titleOffset)
+    if title.isDefined then screen.translateOffset(y = titleOffset)
     // Draw panels recursively
     panel.redraw(currentTheme)
-    if (title.isDefined) {
+    if title.isDefined then {
       screen.translateOffset(y = -titleOffset)
       drawTitle()
     }

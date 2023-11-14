@@ -1,10 +1,12 @@
 import com.jsuereth.sbtpgp.PgpKeys.publishSigned
-import sbt.Keys._
-import sbt._
-import xerial.sbt.Sonatype._
+import sbt.Keys.*
+import sbt.*
+import xerial.sbt.Sonatype.*
 
-ThisBuild / scalaVersion := "2.13.6"
-ThisBuild / scalacOptions ++= Seq("-feature", "-unchecked")
+ThisBuild / scalaVersion := "3.3.1"
+ThisBuild / scalacOptions ++= Seq(
+				"-feature", 
+				"-unchecked")
 ThisBuild / organization        := "net.team2xh"
 publishTo                       := sonatypePublishTo.value
 publishMavenStyle               := true
@@ -33,8 +35,8 @@ lazy val root = (project in file("."))
 lazy val scurses = (project in file("scurses"))
   .settings(
     name                                 := "scurses",
-    version                              := "1.0.1",
-    libraryDependencies += "com.lihaoyi" %% "fastparse" % "2.3.2",
+    version                              := "2.0.0",
+    libraryDependencies += "com.lihaoyi" %% "fastparse" % "3.0.1",
     Compile / run / mainClass            := Some("net.team2xh.scurses.examples.GameOfLife")
   )
 
@@ -42,6 +44,6 @@ lazy val onions = (project in file("onions"))
   .dependsOn(scurses)
   .settings(
     name                      := "onions",
-    version                   := "1.0.1",
+    version                   := "2.0.0",
     Compile / run / mainClass := Some("net.team2xh.onions.examples.ExampleUI")
   )

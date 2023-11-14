@@ -15,9 +15,9 @@ final case class Slider(parent: FramePanel, minValue: Int, maxValue: Int)(val cu
     val v     = currentValue.value
     val nx    = math.round((width.toDouble * (v - minValue)) / (maxValue - minValue)).toInt
     val knob =
-      if (nx == 0)
+      if nx == 0 then
         Symbols.SV + " " + v + " " + Symbols.SV_TO_SR
-      else if (nx == width)
+      else if nx == width then
         Symbols.SV_TO_SL + " " + v + " " + Symbols.SV
       else
         Symbols.SV_TO_SL + " " + v + " " + Symbols.SV_TO_SR
@@ -33,9 +33,9 @@ final case class Slider(parent: FramePanel, minValue: Int, maxValue: Int)(val cu
   }
 
   override def handleKeypress(keypress: Int): Unit = {
-    if (keypress == '<' || keypress == Keys.SPACE) {
+    if keypress == '<' || keypress == Keys.SPACE then {
       currentValue := (currentValue.value - 1) max minValue
-    } else if (keypress == '>' || keypress == Keys.ENTER) {
+    } else if keypress == '>' || keypress == Keys.ENTER then {
       currentValue := (currentValue.value + 1) min maxValue
     }
     needsRedraw = true

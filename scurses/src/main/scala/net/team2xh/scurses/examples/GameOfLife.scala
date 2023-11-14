@@ -7,16 +7,16 @@ import scala.util.Random
 
 final case class GameOfLife(width: Int, height: Int, wrapAround: Boolean = false) {
 
-  var cells = for (_ <- 0 until height) yield for (_ <- 0 until width) yield 0
+  var cells = for _ <- 0 until height yield for _ <- 0 until width yield 0
 
   def field = cells
 
   def set(x0: Int, y0: Int, value: Int = 1): Unit =
     cells =
-      for (y <- 0 until height)
-        yield for (x <- 0 until width)
+      for y <- 0 until height
+        yield for x <- 0 until width
           yield
-            if (x == x0 && y == y0) value
+            if x == x0 && y == y0 then value
             else cells(y)(x)
 
   def glider(x0: Int, y0: Int): Unit = {
@@ -28,10 +28,10 @@ final case class GameOfLife(width: Int, height: Int, wrapAround: Boolean = false
   }
 
   def cell(x: Int, y: Int): Int =
-    if (wrapAround) {
+    if wrapAround then {
       cells((y + height) % height)((x + width) % width)
     } else {
-      if (x < 0 || y < 0 || x >= width || y >= height) 0
+      if x < 0 || y < 0 || x >= width || y >= height then 0
       else cells(y)(x)
     }
 
@@ -42,17 +42,17 @@ final case class GameOfLife(width: Int, height: Int, wrapAround: Boolean = false
 
   def alive(x: Int, y: Int): Int = {
     val n = neighbours(x, y)
-    if (cell(x, y) == 0 && n == 3) 1
-    else if (cell(x, y) == 1 && (n == 2 || n == 3)) 1
+    if cell(x, y) == 0 && n == 3 then 1
+    else if cell(x, y) == 1 && (n == 2 || n == 3) then 1
     else 0
   }
 
   def step() =
-    cells = for (y <- 0 until height) yield for (x <- 0 until width) yield alive(x, y)
+    cells = for y <- 0 until height yield for x <- 0 until width yield alive(x, y)
 
   def randomize(n: Int): Unit = {
     val r = Random
-    for (i <- 0 until n)
+    for i <- 0 until n do
       set(r.nextInt(width), r.nextInt(height))
   }
 
@@ -79,9 +79,9 @@ object GameOfLife extends App {
       new TimerTask {
         override def run(): Unit = {
           gol.step()
-          for (x <- 0 until w / 2; y <- 0 until h) {
+          for x <- 0 until w / 2; y <- 0 until h do {
             val c = palette((step + x / 8 + y / 4) % palette.length)
-            if (gol.field(y)(x) == 1) {
+            if gol.field(y)(x) == 1 then {
               screen.put(x * 2, y, "(", c, 0)
               screen.put(x * 2 + 1, y, ")", c + 12, 0)
             } else {

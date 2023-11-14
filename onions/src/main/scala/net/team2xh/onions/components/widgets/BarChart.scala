@@ -45,7 +45,7 @@ final case class BarChart[T: Numeric](parent: FramePanel,
     // Width of the largest label
     val labelLength = ls.map(_.length).max
     // Width of the chart itself
-    val graphWidth  = if (showLabels) innerWidth - labelLength - 4 else innerWidth - 1
+    val graphWidth  = if showLabels then innerWidth - labelLength - 4 else innerWidth - 1
     val graphHeight = innerHeight - 2
     val valueMin    = min.getOrElse(Math.aBitLessThanMin(vs))
     val valueMax    = max.getOrElse(Math.aBitMoreThanMax(vs))
@@ -64,10 +64,10 @@ final case class BarChart[T: Numeric](parent: FramePanel,
     val spacing  = graphHeight / (vs.length - 1)
     val spaceTop = (graphHeight - (vs.length - 1) * spacing - 1) / 2
     val zero     = math.floor(((0 - valueMin) * graphWidth.toDouble) / (valueMax - valueMin)).toInt
-    for ((y, i) <- (spaceTop until spaceTop + vs.length * spacing by spacing).zipWithIndex) {
+    for (y, i) <- (spaceTop until spaceTop + vs.length * spacing by spacing).zipWithIndex do {
       val length = math.round(((vs(i).toDouble - valueMin) * graphWidth) / (valueMax - valueMin)).toInt
       // Draw the bars themselves
-      if (vs(i).toDouble >= 0) {
+      if vs(i).toDouble >= 0 then {
         screen.put(zero,
                    1 + y,
                    Symbols.BLOCK_RIGHT + Symbols.BLOCK * (length - zero) + Symbols.BLOCK_LEFT,
@@ -83,19 +83,19 @@ final case class BarChart[T: Numeric](parent: FramePanel,
         )
       }
       // Draw values
-      val valuePos = if (vs(i).toInt >= 0) length + 2 else zero + 1
+      val valuePos = if vs(i).toInt >= 0 then length + 2 else zero + 1
       val text = vs(i) match {
         case _: Double => df.format(vs(i).toDouble)
         case _: Int    => vs(i).toString
       }
-      if (showValues)
+      if showValues then
         screen.put(valuePos, 1 + y, text, foreground = theme.foreground, background = theme.background)
 
     }
     // Draw legends
     val spaceTopLabels = (graphHeight - vs.length) / 2
-    if (showLabels)
-      for (i <- vs.indices) {
+    if showLabels then
+      for i <- vs.indices do {
         screen.put(graphWidth + 2,
                    1 + spaceTopLabels + i,
                    Symbols.SQUARE,

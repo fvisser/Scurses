@@ -40,12 +40,12 @@ final case class Histogram[T: Numeric](parent: FramePanel,
 
   override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
 
-    val valueMin = min.getOrElse(if (values.isEmpty) 0 else Math.aBitLessThanMin(values))
-    val valueMax = max.getOrElse(if (values.isEmpty) 10 else Math.aBitMoreThanMax(values) + 1)
+    val valueMin = min.getOrElse(if values.isEmpty then 0 else Math.aBitLessThanMin(values))
+    val valueMax = max.getOrElse(if values.isEmpty then 10 else Math.aBitMoreThanMax(values) + 1)
 
     val valuesLength = valueMax.toString.length max valueMin.toString.length
-    val x0           = valuesLength + (if (showLabels) 2 else 0)
-    val graphWidth   = (if (showLabels) innerWidth - 3 else innerWidth - 1) - valuesLength
+    val x0           = valuesLength + (if showLabels then 2 else 0)
+    val graphWidth   = (if showLabels then innerWidth - 3 else innerWidth - 1) - valuesLength
     val graphHeight  = innerHeight - 1
 
     // Draw grid
@@ -75,24 +75,24 @@ final case class Histogram[T: Numeric](parent: FramePanel,
 
     // Draw bars
     val charHeight = (valueMax - valueMin).toDouble / graphHeight
-    for (i <- 0 until ((graphWidth - 1) min values.length)) {
+    for i <- 0 until ((graphWidth - 1) min values.length) do {
       val v  = values(i)
       val ny = graphHeight - math.round((graphHeight * (v.toDouble - valueMin)) / (valueMax - valueMin)).toInt
 
       val color = Palettes.mapToRGB((v.toDouble - valueMin).abs, (valueMax - valueMin).abs)
 
-      for (y <- ny to graphHeight) {
+      for y <- ny to graphHeight do {
         val isLower = v.toDouble % charHeight < charHeight / 2.0
         val s =
-          if (y == graphHeight) Symbols.BLOCK_UPPER
-          else if (y == ny && (!isLower || ny == 0)) Symbols.BLOCK_LOWER
+          if y == graphHeight then Symbols.BLOCK_UPPER
+          else if y == ny && (!isLower || ny == 0) then Symbols.BLOCK_LOWER
           else Symbols.BLOCK
         screen.put(x0 + (graphWidth - i - 1), y, s, color, theme.background)
       }
     }
 
     // Draw labels
-    if (showLabels) {
+    if showLabels then {
       Drawing.drawAxisLabels(x0, graphWidth, graphHeight, labelY = labelY, theme = theme)
     }
   }

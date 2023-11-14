@@ -10,8 +10,8 @@ object Themes {
     val accent1: Int
     val accent2: Int
     val accent3: Int
-    def foreground(focus: Boolean): Int = if (focus) focusForeground else foreground
-    def background(focus: Boolean): Int = if (focus) focusBackground else background
+    def foreground(focus: Boolean): Int = if focus then focusForeground else foreground
+    def background(focus: Boolean): Int = if focus then focusBackground else background
   }
 
   val default = new ColorScheme {

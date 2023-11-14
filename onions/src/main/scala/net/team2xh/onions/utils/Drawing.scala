@@ -14,18 +14,18 @@ object Drawing {
                      theme: ColorScheme
   )(implicit screen: Scurses): Unit = {
 
-    if (labelX != "") {
+    if labelX != "" then {
       val lX =
-        if (labelX.length > graphWidth) labelX.substring(0, graphWidth - 3) + "..."
+        if labelX.length > graphWidth then labelX.substring(0, graphWidth - 3) + "..."
         else labelX
       screen.put(x0 + (graphWidth - lX.length) / 2, graphHeight + 2, lX, theme.accent3, theme.background)
     }
-    if (labelY != "") {
+    if labelY != "" then {
       val lY =
-        if (labelY.length > graphHeight) labelY.substring(0, graphHeight - 3) + "..."
+        if labelY.length > graphHeight then labelY.substring(0, graphHeight - 3) + "..."
         else labelY
       val y0 = (graphHeight - lY.length) / 2
-      for ((char, y) <- lY.zipWithIndex)
+      for (char, y) <- lY.zipWithIndex do
         screen.put(0, y0 + y, "" + char, theme.accent3, theme.background)
     }
   }
@@ -41,14 +41,14 @@ object Drawing {
                      horizontal: Boolean = true
   )(implicit screen: Scurses): Unit = {
 
-    val step      = if (horizontal) gridSize else gridSize / 2
-    val start     = (n: Int) => if (horizontal) n else length - n
+    val step      = if horizontal then gridSize else gridSize / 2
+    val start     = (n: Int) => if horizontal then n else length - n
     val span      = valueMax - valueMin
-    val lastIndex = if (horizontal) Seq() else Seq(length)
-    for (i <- (0 until length by step) ++ lastIndex) {
+    val lastIndex = if horizontal then Seq() else Seq(length)
+    for i <- (0 until length by step) ++ lastIndex do {
       val index = math.floor((start(i) * span.toDouble) / length).toInt + valueMin
-      val x1    = if (horizontal) x0 + i else x0
-      val y1    = if (horizontal) y0 else y0 + i
+      val x1    = if horizontal then x0 + i else x0
+      val y1    = if horizontal then y0 else y0 + i
       screen.put(x1, y1, index.toString, fg, bg)
     }
   }
@@ -75,36 +75,36 @@ object Drawing {
     screen.put(x0 + w, y0 + h, Symbols.BRC_S_TO_S, fg, bg)
     screen.put(x0, y0 + h, Symbols.BLC_S_TO_S, fg, bg)
     // Edges
-    for (x <- x0 + 1 until x0 + w) {
-      val symbol  = if (showVertical && horizontalPositions.contains(x)) Symbols.SH_TO_SD else Symbols.SH
-      val symbol2 = if (showVertical && horizontalPositions.contains(x)) Symbols.SH_TO_SU else Symbols.SH
+    for x <- x0 + 1 until x0 + w do {
+      val symbol  = if showVertical && horizontalPositions.contains(x) then Symbols.SH_TO_SD else Symbols.SH
+      val symbol2 = if showVertical && horizontalPositions.contains(x) then Symbols.SH_TO_SU else Symbols.SH
       screen.put(x, y0, symbol, fg, bg)
       screen.put(x, y0 + h, symbol2, fg, bg)
     }
-    for (y <- y0 + 1 until y0 + h) {
-      val symbol  = if (showHorizontal && verticalPositions.contains(y)) Symbols.SV_TO_SR else Symbols.SV
-      val symbol2 = if (showHorizontal && verticalPositions.contains(y)) Symbols.SV_TO_SL else Symbols.SV
+    for y <- y0 + 1 until y0 + h do {
+      val symbol  = if showHorizontal && verticalPositions.contains(y) then Symbols.SV_TO_SR else Symbols.SV
+      val symbol2 = if showHorizontal && verticalPositions.contains(y) then Symbols.SV_TO_SL else Symbols.SV
       screen.put(x0, y, symbol, fg, bg)
       screen.put(x0 + w, y, symbol2, fg, bg)
     }
-    if (showVertical)
-      for (y <- y0 + 1 until y0 + h; x <- horizontalPositions)
+    if showVertical then
+      for y <- y0 + 1 until y0 + h; x <- horizontalPositions do
         screen.put(x, y, Symbols.SV, fg, bg)
-    if (showHorizontal)
-      for (x <- x0 + 1 until x0 + w; y <- verticalPositions)
+    if showHorizontal then
+      for x <- x0 + 1 until x0 + w; y <- verticalPositions do
         screen.put(x, y, Symbols.SH, fg, bg)
-    if (showHorizontal && showVertical)
-      for (
+    if showHorizontal && showVertical then
+      for
         x <- horizontalPositions;
         y <- verticalPositions
-      )
+      do
         screen.put(x, y, Symbols.SH_X_SV, fg, bg)
   }
 
   def clipText(text: String, limit: Int, before: Boolean = false) =
-    if (text.length > limit) {
-      val clipped = text.substring(if (before) text.length - limit + 3 else 0, if (before) text.length else limit - 3)
-      if (before)
+    if text.length > limit then {
+      val clipped = text.substring(if before then text.length - limit + 3 else 0, if before then text.length else limit - 3)
+      if before then
         "..." + clipped
       else
         clipped + "..."

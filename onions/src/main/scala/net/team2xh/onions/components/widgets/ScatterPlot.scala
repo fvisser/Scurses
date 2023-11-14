@@ -29,9 +29,9 @@ final case class ScatterPlot[T: Numeric](parent: FramePanel,
     val minY = Math.aBitLessThanMin(ys)
 
     val valuesLength = maxY.toString.length max minY.toString.length
-    val x0           = valuesLength + (if (showLabels) 2 else 0)
-    val graphWidth   = (if (showLabels) innerWidth - 3 else innerWidth - 1) - valuesLength
-    val graphHeight  = if (showLabels) innerHeight - 3 else innerHeight - 2
+    val x0           = valuesLength + (if showLabels then 2 else 0)
+    val graphWidth   = (if showLabels then innerWidth - 3 else innerWidth - 1) - valuesLength
+    val graphHeight  = if showLabels then innerHeight - 3 else innerHeight - 2
 
     // Draw grid
     Drawing.drawGrid(x0,
@@ -58,14 +58,14 @@ final case class ScatterPlot[T: Numeric](parent: FramePanel,
     Drawing.drawAxisValues(x0, graphHeight + 1, graphWidth, gridSize, minX, maxX, theme.accent3, theme.background)
 
     // Draw labels
-    if (showLabels) {
+    if showLabels then {
       Drawing.drawAxisLabels(x0, graphWidth, graphHeight, labelX, labelY, theme)
     }
 
     // Prepare values (we use half vertical resolution)
     val points     = mutable.ArrayDeque.fill[Int](graphWidth + 1, graphHeight + 1)(0)
     val charHeight = (maxY - minY).toDouble / graphHeight
-    for (value <- values.value) {
+    for value <- values.value do {
       val nx      = math.round((graphWidth * (value._1.toDouble - minX)) / (maxX - minX)).toInt
       val ny      = graphHeight - math.round((graphHeight * (value._2.toDouble - minY)) / (maxY - minY)).toInt
       val point   = points(nx)(ny)
@@ -73,7 +73,7 @@ final case class ScatterPlot[T: Numeric](parent: FramePanel,
       points(nx).update(ny, point | isLower)
     }
     // Plot values
-    for (x <- 0 to graphWidth; y <- 0 to graphHeight) {
+    for x <- 0 to graphWidth; y <- 0 to graphHeight do {
       val point = points(x)(y)
       val symbol = point match {
         case 0 => ""
@@ -81,7 +81,7 @@ final case class ScatterPlot[T: Numeric](parent: FramePanel,
         case 2 => Symbols.BLOCK_LOWER
         case 3 => Symbols.BLOCK
       }
-      if (point != 0)
+      if point != 0 then
         screen.put(x0 + x, y, symbol, foreground = color, background = theme.background)
     }
   }

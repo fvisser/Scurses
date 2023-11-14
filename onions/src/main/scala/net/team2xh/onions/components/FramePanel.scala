@@ -108,8 +108,8 @@ final case class FramePanel(parent: Component)(implicit screen: Scurses) extends
       case _    => height = newRowHeight
     }
 
-    bottom.foreach(_.updateDimensions(if (left.isEmpty) newWidth else width, newHeight))
-    right.foreach(_.updateDimensions(newWidth, if (top.isEmpty) newHeight else height))
+    bottom.foreach(_.updateDimensions(if left.isEmpty then newWidth else width, newHeight))
+    right.foreach(_.updateDimensions(newWidth, if top.isEmpty then newHeight else height))
   }
 
   def getTreeWalk: Seq[FramePanel] = {
@@ -125,18 +125,18 @@ final case class FramePanel(parent: Component)(implicit screen: Scurses) extends
   }
 
   def getFocusedWidget: Option[Widget] =
-    if (widgetFocus < widgets.length)
+    if widgetFocus < widgets.length then
       Some(widgets(widgetFocus))
     else
       None
 
   def previousFocusableWidget: Option[Int] = {
     val l = widgets.length
-    if (l == 0 || widgetFocus == 0)
+    if l == 0 || widgetFocus == 0 then
       None
     else {
-      for (i <- widgetFocus - 1 to 0 by -1)
-        if (widgets(i).focusable)
+      for i <- widgetFocus - 1 to 0 by -1 do
+        if widgets(i).focusable then
           return Some(i)
       None
     }
@@ -144,11 +144,11 @@ final case class FramePanel(parent: Component)(implicit screen: Scurses) extends
 
   def nextFocusableWidget: Option[Int] = {
     val l = widgets.length
-    if (l == 0 || widgetFocus >= l - 1)
+    if l == 0 || widgetFocus >= l - 1 then
       None
     else {
-      for (i <- widgetFocus + 1 until l)
-        if (widgets(i).focusable)
+      for i <- widgetFocus + 1 until l do
+        if widgets(i).focusable then
           return Some(i)
       None
     }
@@ -256,14 +256,14 @@ final case class FramePanel(parent: Component)(implicit screen: Scurses) extends
     propagateDraw(_.drawEdges(theme))
 
     // Vertical edges
-    for (y <- 1 to height - 1) {
+    for y <- 1 to height - 1 do {
       screen.put(width, y, Symbols.SV, foreground = theme.foreground, background = theme.background)
-      if (left.isEmpty)
+      if left.isEmpty then
         screen.put(0, y, Symbols.SV, foreground = theme.foreground, background = theme.background)
     }
     // Horizontal edges
     screen.put(1, 0, Symbols.SH * (width - 1), foreground = theme.foreground, background = theme.background)
-    if (bottom.isEmpty)
+    if bottom.isEmpty then
       screen.put(1, height, Symbols.SH * (width - 1), foreground = theme.foreground, background = theme.background)
   }
 
@@ -272,20 +272,20 @@ final case class FramePanel(parent: Component)(implicit screen: Scurses) extends
 
     // Top-left corner
     val tlc =
-      if (left.isEmpty)
-        if (top.isEmpty)
+      if left.isEmpty then
+        if top.isEmpty then
           Symbols.TLC_S_TO_S
         else
           Symbols.SV_TO_SR
-      else if (top.isEmpty)
+      else if top.isEmpty then
         Symbols.SH_TO_SD
       else
         Symbols.SH_X_SV
     // Bottom-left corner
     // ┼ not supported
     val blc =
-      if (hasAnyLeft)
-        if (bottom.isEmpty)
+      if hasAnyLeft then
+        if bottom.isEmpty then
           Symbols.SH_TO_SU
         else
           Symbols.SV_TO_SR
@@ -293,23 +293,23 @@ final case class FramePanel(parent: Component)(implicit screen: Scurses) extends
         Symbols.BLC_S_TO_S
     // Bottom-right corner
     val brc =
-      if (hasAnyRight)
-        if (bottom.isEmpty)
+      if hasAnyRight then
+        if bottom.isEmpty then
           Symbols.SH_TO_SU
         else
           Symbols.SV_TO_SL
-      else if (bottom.isEmpty)
+      else if bottom.isEmpty then
         Symbols.BRC_S_TO_S
       else
         Symbols.SV_TO_SL
     // Top-right corner
     val trc =
-      if (top.isEmpty)
-        if (right.isEmpty)
+      if top.isEmpty then
+        if right.isEmpty then
           Symbols.TRC_S_TO_S
         else
           Symbols.SH_TO_SD
-      else if (right.isEmpty)
+      else if right.isEmpty then
         Symbols.SV_TO_SL
       else
         Symbols.SH_TO_SD
@@ -325,19 +325,19 @@ final case class FramePanel(parent: Component)(implicit screen: Scurses) extends
     propagateDraw(_.drawTitles(theme))
     val ts = tabs.zipWithIndex
       .map { case (t, i) =>
-        val s = if (i == currentTab) "[r]" else ""
-        val e = if (i == currentTab) "[/r]" else ""
+        val s = if i == currentTab then "[r]" else ""
+        val e = if i == currentTab then "[/r]" else ""
         s"$s#${i + 1}$e"
       }
       .mkString("|")
 
     val tabText =
-      if (tabs.length == 1) ""
+      if tabs.length == 1 then ""
       else " " + ts
 
-    if (title != "") {
+    if title != "" then {
       screen.putRichText(2, 0, r"[[$title$tabText]", theme.foreground, theme.background)
-    } else if (tabText != "") {
+    } else if tabText != "" then {
       screen.putRichText(2, 0, r"[[$tabText]", theme.foreground, theme.background)
     }
   }
@@ -346,10 +346,10 @@ final case class FramePanel(parent: Component)(implicit screen: Scurses) extends
     propagateDraw(_.drawDebug(theme))
 
     // format: off
-    val neighbours = "%s%s%s%s".format(if (top.isDefined)    "↑" else "",
-                                       if (bottom.isDefined) "↓" else "",
-                                       if (left.isDefined)   "←" else "",
-                                       if (right.isDefined)  "→" else "")
+    val neighbours = "%s%s%s%s".format(if top.isDefined then    "↑" else "",
+                                       if bottom.isDefined then "↓" else "",
+                                       if left.isDefined then   "←" else "",
+                                       if right.isDefined then  "→" else "")
     // format: on
 
     val line = s"(#$id|${width}x$height|$neighbours)"
@@ -359,8 +359,8 @@ final case class FramePanel(parent: Component)(implicit screen: Scurses) extends
   private[FramePanel] def fillBoxes(theme: ColorScheme): Unit = {
     propagateDraw(_.fillBoxes(theme))
 
-    if (needsClear) {
-      for (y <- 1 to height - 1)
+    if needsClear then {
+      for y <- 1 to height - 1 do
         screen.put(1, y, " " * (width - 1), background = theme.background)
       needsClear = false
     }
@@ -372,25 +372,25 @@ final case class FramePanel(parent: Component)(implicit screen: Scurses) extends
     val indicator = theme.accent1
     screen.put(1,
                1,
-               if (focus) Symbols.BLOCK + Symbols.BLOCK_UPPER else "  ",
+               if focus then Symbols.BLOCK + Symbols.BLOCK_UPPER else "  ",
                foreground = indicator,
                background = theme.background
     )
     screen.put(1,
                height - 1,
-               if (focus) Symbols.BLOCK + Symbols.BLOCK_LOWER else "  ",
+               if focus then Symbols.BLOCK + Symbols.BLOCK_LOWER else "  ",
                foreground = indicator,
                background = theme.background
     )
     screen.put(width - 2,
                1,
-               if (focus) Symbols.BLOCK_UPPER + Symbols.BLOCK else "  ",
+               if focus then Symbols.BLOCK_UPPER + Symbols.BLOCK else "  ",
                foreground = indicator,
                background = theme.background
     )
     screen.put(width - 2,
                height - 1,
-               if (focus) Symbols.BLOCK_LOWER + Symbols.BLOCK else "  ",
+               if focus then Symbols.BLOCK_LOWER + Symbols.BLOCK else "  ",
                foreground = indicator,
                background = theme.background
     )
@@ -402,7 +402,7 @@ final case class FramePanel(parent: Component)(implicit screen: Scurses) extends
 
     fillBoxes(theme)
     drawFocusIndicator(theme)
-    if (redrawBorders) {
+    if redrawBorders then {
       drawEdges(theme)
       drawCorners(theme)
       redrawBorders = false
@@ -417,11 +417,11 @@ final case class FramePanel(parent: Component)(implicit screen: Scurses) extends
     screen.clip(width, height - 1)
     var y             = 2
     var heightChanged = false
-    for ((widget, i) <- widgets.zipWithIndex) {
-      if (widget.needsRedraw) {
+    for (widget, i) <- widgets.zipWithIndex do {
+      if widget.needsRedraw then {
         screen.translateOffset(x = 2, y = y)
         // clear widget's space first
-        for (y <- 0 until widget.innerHeight)
+        for y <- 0 until widget.innerHeight do
           screen.put(0, y, " " * widget.innerWidth, background = theme.background)
         widget.draw(focus && widgetFocus == i, theme)
         screen.translateOffset(x = -2, y = -y)
@@ -429,15 +429,15 @@ final case class FramePanel(parent: Component)(implicit screen: Scurses) extends
       val newHeight = widget.innerHeight
       y += newHeight
       // If the height changed, redraw the rest
-      if (heights(i) != newHeight) {
+      if heights(i) != newHeight then {
         heightChanged = true
-        for (j <- i + 1 until widgets.length)
+        for j <- i + 1 until widgets.length do
           widgets(j).needsRedraw = true
       }
       heights(i) = newHeight
     }
     // Clear the rest of the panel if heights have changed
-    for (y <- y to height - 1)
+    for y <- y to height - 1 do
       screen.put(1, y, " " * (width - 1), background = theme.background)
     screen.unclip()
   }

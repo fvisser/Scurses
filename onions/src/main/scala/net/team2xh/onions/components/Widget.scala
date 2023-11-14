@@ -10,7 +10,7 @@ abstract class Widget(parent: FramePanel, values: Varying[_]*)(implicit screen: 
 
   parent.addWidget(this)
 
-  for (value <- values)
+  for value <- values do
     value.subscribe { () =>
       needsRedraw = true
     }

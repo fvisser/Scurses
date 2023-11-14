@@ -12,7 +12,7 @@ import javax.imageio.ImageIO
 object BitMap {
 
   def apply(parent: FramePanel, path: String, relative: Boolean = false)(implicit screen: Scurses): BitMap = {
-    val fullPath = if (relative) new File("").getAbsolutePath + path else path
+    val fullPath = if relative then new File("").getAbsolutePath + path else path
     val image    = ImageIO.read(new File(fullPath))
     new BitMap(parent, image)
   }
@@ -27,11 +27,11 @@ class BitMap(parent: FramePanel, image: BufferedImage)(implicit screen: Scurses)
   val colors = {
     val width  = image.getWidth
     val height = image.getHeight
-    for (x <- 0 until width)
-      yield for (y <- 0 until height / 2) yield {
+    for x <- 0 until width
+      yield for y <- 0 until height / 2 yield {
         // Read two rows at a time
         val upper = Colors.fromRGBInt(image.getRGB(x, y * 2))
-        val lower = if (height % 2 == 1) -1 else Colors.fromRGBInt(image.getRGB(x, y * 2 + 1))
+        val lower = if height % 2 == 1 then -1 else Colors.fromRGBInt(image.getRGB(x, y * 2 + 1))
         (upper, lower)
       }
   }
@@ -39,8 +39,8 @@ class BitMap(parent: FramePanel, image: BufferedImage)(implicit screen: Scurses)
   override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     val width = image.getWidth min innerWidth
     val x0    = (innerWidth - width) / 2
-    for (x <- 0 until width)
-      for (y <- 0 until innerHeight) {
+    for x <- 0 until width do
+      for y <- 0 until innerHeight do {
         // Read two rows at a time
         val c = colors(x)(y)
         screen.put(x0 + x, y, Symbols.BLOCK_UPPER, c._1, c._2)

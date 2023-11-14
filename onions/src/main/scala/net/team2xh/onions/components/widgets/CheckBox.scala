@@ -11,7 +11,7 @@ final case class CheckBox(parent: FramePanel, text: String, checked: Varying[Boo
   def focusable = true
 
   def drawText(foreground: Int, background: Int): Unit = {
-    val line = " [%s] %s".format(if (checked.value) "√" else " ", Drawing.clipText(text, innerWidth - 7))
+    val line = " [%s] %s".format(if checked.value then "√" else " ", Drawing.clipText(text, innerWidth - 7))
     screen.put(0, 0, line + " " * (innerWidth - line.length - 1), foreground = foreground, background = background)
   }
 
@@ -19,7 +19,7 @@ final case class CheckBox(parent: FramePanel, text: String, checked: Varying[Boo
     drawText(theme.foreground(focus), theme.background(focus))
 
   override def handleKeypress(keypress: Int): Unit =
-    if (keypress == Keys.ENTER || keypress == Keys.SPACE)
+    if keypress == Keys.ENTER || keypress == Keys.SPACE then
       checked := !checked.value
 
   override def innerHeight: Int = 1

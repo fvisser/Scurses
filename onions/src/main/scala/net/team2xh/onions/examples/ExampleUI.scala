@@ -160,7 +160,7 @@ object ExampleUI extends App {
       new TimerTask {
         var s = 1
         override def run(): Unit = {
-          val column = if (s % 2 == 0) ":" else " "
+          val column = if s % 2 == 0 then ":" else " "
           ss.text      := "%02d%s%02d".format(s / 60, column, s % 60)
           bars.values  := values_1d_1.map(n => n + r.nextDouble() * 4 - 2)
           bars2.values := values_1d_2.map(n => n + r.nextInt(5) - 2)

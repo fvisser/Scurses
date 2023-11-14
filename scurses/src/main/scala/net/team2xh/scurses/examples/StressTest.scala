@@ -13,10 +13,10 @@ object StressTest extends App {
       override def run(): Unit = {
         var i = 0
         var j = 0
-        while (running) {
+        while running do {
           val start = System.currentTimeMillis
-          for (x <- 0 until w; y <- 0 until h)
-            if (x > 11 || y > 2) {
+          for x <- 0 until w; y <- 0 until h do
+            if x > 11 || y > 2 then {
               val c = (x + y + j) % 256
               screen.put(x, y, s"${chars((x + y + i) % chars.length)}", c, (c + 128) % 256)
             }
@@ -26,7 +26,7 @@ object StressTest extends App {
           val fps  = 1000.0 / (System.currentTimeMillis - start)
           val _fps = "%2.2fFPS".format(fps)
           screen.put(0, 1, "           ")
-          screen.put(2, 1, "%s%s".format(if (_fps.length < 8) " " * (8 - _fps.length) else "", _fps))
+          screen.put(2, 1, "%s%s".format(if _fps.length < 8 then " " * (8 - _fps.length) else "", _fps))
         }
       }
     }

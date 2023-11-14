@@ -46,7 +46,7 @@ object Colors {
   }
 
   private def hexToRGB(hex: String): (Int, Int, Int) = {
-    val h = if (hex(0) == '#') hex.tail else hex
+    val h = if hex(0) == '#' then hex.tail else hex
     (Integer.parseInt("" + h(0) + h(1), 16),
      Integer.parseInt("" + h(2) + h(3), 16),
      Integer.parseInt("" + h(4) + h(5), 16)

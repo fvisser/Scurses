@@ -68,43 +68,44 @@ object RichText {
   final case class IndexedColor(code: Int)  extends Color
   final case class HexColor(hex: String)    extends Color
 
-  private def letter[_: P]   = P(CharIn("a-z"))
-  private def digit[_: P]    = P(CharIn("0-9"))
-  private def hexDigit[_: P] = P(CharIn("0-9", "a-f", "A-F"))
+  private def letter[T: P]   = P(CharIn("a-z"))
+  private def digit[T: P]    = P(CharIn("0-9"))
+  private def hexDigit[T: P] = P(CharIn("0-9", "a-f", "A-F"))
 
-  private def name[_: P]  = P(letter.rep(1).!)
-  private def index[_: P] = P(digit.rep(1).!) map (_.toInt)
-  private def hex[_: P]   = P(("#" ~/ hexDigit ~/ hexDigit ~/ hexDigit ~/ hexDigit ~/ hexDigit ~/ hexDigit).!)
+  private def name[T: P]  = P(letter.rep(1).!)
+  private def index[T: P] = P(digit.rep(1).!) map (_.toInt)
+  private def hex[T: P]   = P(("#" ~/ hexDigit ~/ hexDigit ~/ hexDigit ~/ hexDigit ~/ hexDigit ~/ hexDigit).!)
 
-  private def bold[_: P]       = P("b") map (_ => Bold)
-  private def underline[_: P]  = P("u") map (_ => Underline)
-  private def blink[_: P]      = P("bl") map (_ => Blink)
-  private def reverse[_: P]    = P("r") map (_ => Reverse)
-  private def foreground[_: P] = P("fg") map (_ => Foreground)
-  private def background[_: P] = P("bg") map (_ => Background)
+  private def bold[T: P]       = P("b") map (_ => Bold)
+  private def underline[T: P]  = P("u") map (_ => Underline)
+  private def blink[T: P]      = P("bl") map (_ => Blink)
+  private def reverse[T: P]    = P("r") map (_ => Reverse)
+  private def foreground[T: P] = P("fg") map (_ => Foreground)
+  private def background[T: P] = P("bg") map (_ => Background)
 
-  private def attribute[_: P] = P(underline | blink | bold | reverse | foreground | background)
+  private def attribute[T: P] = P(underline | blink | bold | reverse | foreground | background)
 
-  private def namedColor[_: P]   = P(name) map NamedColor
-  private def indexedColor[_: P] = P(index) map IndexedColor
-  private def hexColor[_: P]     = P(hex) map HexColor
+  private def namedColor[T: P]   = P(name) map NamedColor.apply
+  private def indexedColor[T: P] = P(index) map IndexedColor.apply
+  private def hexColor[T: P]     = P(hex) map HexColor.apply
 
-  private def color[_: P] = P(namedColor | indexedColor | hexColor)
+  private def color[T: P] = P(namedColor | indexedColor | hexColor)
 
-  private def startAttribute[_: P] = P(attribute) map StartAttribute
-  private def beginColor[_: P] = P(("fg" | "bg").! ~ ":" ~/ color) map {
+  private def startAttribute[T: P] = P(attribute) map StartAttribute.apply
+  private def beginColor[T: P] = P(("fg" | "bg").! ~ ":" ~/ color) map {
     case ("fg", aColor) => StartAttribute(Foreground(aColor))
     case (_, aColor)    => StartAttribute(Background(aColor))
   }
-  private def stop[_: P] = P("/" ~/ ("*".! | attribute)) map {
-    case "*"             => ResetAttributes
-    case attr: Attribute => StopAttribute(attr)
+  // Fix non-exhaustive search warning
+  private def stop[T: P] = P("/" ~/ ("*".! | attribute)) map {
+    case attr: Attribute  => StopAttribute(attr)
+    case _: String         => ResetAttributes
   }
 
-  private def block[_: P]  = P("[" ~/ (beginColor | startAttribute | stop) ~/ "]")
-  private def escape[_: P] = P("[[".!) map (_ => Text("["))
-  private def text[_: P]   = P(CharsWhile(c => c != '[').!) map Text
+  private def block[T: P]  = P("[" ~/ (beginColor | startAttribute | stop) ~/ "]")
+  private def escape[T: P] = P("[[".!) map (_ => Text("["))
+  private def text[T: P]   = P(CharsWhile(c => c != '[').!) map Text.apply
 
-  private def richText[_: P] = P((text | escape | block).rep) map (RichText(_: _*))
+  private def richText[T: P] = P((text | escape | block).rep) map (RichText(_: _*))
 
 }

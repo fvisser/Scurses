@@ -24,7 +24,7 @@ object TextWrap {
     var line             = mutable.ArrayDeque[Instruction]()
     var chunk            = ""
 
-    while (instructions.hasNext) {
+    while instructions.hasNext do {
       val instruction = instructions.next()
       instruction match {
         case StartAttribute(attribute) =>
@@ -43,10 +43,10 @@ object TextWrap {
         case Text(text) =>
           val tokenizer = new StringTokenizer(text)
 
-          while (tokenizer.hasMoreTokens) {
+          while tokenizer.hasMoreTokens do {
             val word = tokenizer.nextToken
 
-            if ((word.length + 1) > spaceLeft) {
+            if ((word.length + 1) > spaceLeft) then {
               line += Text(chunk)
               lines += ((line.toList, spaceLeft))
               line = mutable.ArrayDeque[Instruction]()
@@ -73,10 +73,10 @@ object TextWrap {
     val lines = mutable.ArrayDeque[(List[String], Int)]()
     var line  = mutable.ArrayDeque[String]()
 
-    while (tokenizer.hasMoreTokens) {
+    while tokenizer.hasMoreTokens do {
       val word = tokenizer.nextToken
 
-      if ((word.length + 1) > spaceLeft) {
+      if ((word.length + 1) > spaceLeft) then {
         lines += ((line.toList, spaceLeft))
         line = mutable.ArrayDeque[String](word)
         spaceLeft = width - (word.length + 1)
@@ -97,18 +97,18 @@ object TextWrap {
         }.toSeq
       case JUSTIFY =>
         lines.zipWithIndex.map { case ((l, s), i) =>
-          if (l.length == 1) {
+          if l.length == 1 then {
             l.head
-          } else if (i == lines.length - 1) {
+          } else if i == lines.length - 1 then {
             l.mkString(" ")
           } else {
             val spaceWidth = s / (l.length - 1)
             var rest       = s - (spaceWidth * (l.length - 1))
             l.zipWithIndex.map { case (word, j) =>
-              if (rest > 0) {
+              if rest > 0 then {
                 rest -= 1
                 word + " " * (spaceWidth + 2)
-              } else if (j == l.length - 1) {
+              } else if j == l.length - 1 then {
                 word
               } else word + " " * (spaceWidth + 1)
             }.mkString
@@ -118,3 +118,4 @@ object TextWrap {
   }
 
 }
+

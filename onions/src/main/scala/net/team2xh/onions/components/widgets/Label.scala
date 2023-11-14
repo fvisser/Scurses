@@ -19,7 +19,7 @@ final case class Label(parent: FramePanel,
 
   def drawText(foreground: Int, background: Int): Unit = {
     lines = TextWrap.wrapText(text.value, innerWidth - 1, alignment.value)
-    for ((line, i) <- lines.zipWithIndex)
+    for (line, i) <- lines.zipWithIndex do
       screen.put(0,
                  i,
                  " " + line + " " * (innerWidth - line.length - 1),
@@ -32,7 +32,7 @@ final case class Label(parent: FramePanel,
     drawText(theme.foreground(focus), theme.background(focus))
 
   override def handleKeypress(keypress: Int): Unit =
-    if (keypress == Keys.ENTER || keypress == Keys.SPACE) action()
+    if keypress == Keys.ENTER || keypress == Keys.SPACE then action()
 
   override def innerHeight: Int = lines.length
 }

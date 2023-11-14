@@ -20,11 +20,11 @@ abstract class FontMapper(parent: FramePanel,
   override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     val t = text.value
     val h = empty.length
-    if (t.nonEmpty) {
+    if t.nonEmpty then {
       val charsSymbols = t.toLowerCase.map(c => (c, symbols.getOrElse(c, empty).head.length))
       val wrapped = charsSymbols.foldLeft(Seq[(String, Int)](("", 0))) { case (accu, (c, l)) =>
         val current = accu.last
-        if (current._2 + l > innerWidth) {
+        if current._2 + l > innerWidth then {
           accu :+ (s"$c", l)
         } else {
           accu.init :+ (current._1 + c, current._2 + l)
@@ -33,10 +33,10 @@ abstract class FontMapper(parent: FramePanel,
       val wrappedText = wrapped.map(_._1)
       height = wrapped.length * empty.length
       val width = wrapped.maxBy(_._2)._2
-      val c     = if (color.value < 0) theme.foreground else color.value
-      for ((chunk, i) <- wrappedText.zipWithIndex) {
+      val c     = if color.value < 0 then theme.foreground else color.value
+      for (chunk, i) <- wrappedText.zipWithIndex do {
         val chars = chunk.toLowerCase.map(symbols.getOrElse(_, empty) ++ Seq("    "))
-        for (y <- 0 until h)
+        for y <- 0 until h do
           screen.put((innerWidth - width) / 2,
                      y + i * 3,
                      ("" /: chars)((line, char) => line + char(y)),

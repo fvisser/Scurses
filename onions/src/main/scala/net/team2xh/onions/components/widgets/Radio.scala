@@ -8,7 +8,7 @@ import net.team2xh.scurses.{Keys, Scurses}
 object Radio {
   def apply(parent: FramePanel, options: Seq[String])(implicit screen: Scurses): Varying[Int] = {
     val choice: Varying[Int] = 0
-    for ((option, i) <- options.zipWithIndex)
+    for (option, i) <- options.zipWithIndex do
       Radio(parent, option, i, choice)
     choice := 0
   }
@@ -28,7 +28,7 @@ private[widgets] final case class Radio(parent: FramePanel, text: String, id: In
   }
 
   def drawText(foreground: Int, background: Int): Unit = {
-    val line = " (%s) %s".format(if (checked) "●" else " ", Drawing.clipText(text, innerWidth - 7))
+    val line = " (%s) %s".format(if checked then "●" else " ", Drawing.clipText(text, innerWidth - 7))
     screen.put(0, 0, line + " " * (innerWidth - line.length - 1), foreground = foreground, background = background)
   }
 
@@ -36,7 +36,7 @@ private[widgets] final case class Radio(parent: FramePanel, text: String, id: In
     drawText(theme.foreground(focus), theme.background(focus))
 
   override def handleKeypress(keypress: Int): Unit =
-    if (keypress == Keys.ENTER || keypress == Keys.SPACE)
+    if keypress == Keys.ENTER || keypress == Keys.SPACE then
       choice := id
 
   override def innerHeight: Int = 1

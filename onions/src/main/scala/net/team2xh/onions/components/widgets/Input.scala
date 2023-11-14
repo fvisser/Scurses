@@ -13,24 +13,24 @@ final case class Input(parent: FramePanel, defaultText: String = "Input")(implic
   def cursorIndex           = text.value.length
 
   override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
-    val cursorSymbol = if (focus) Symbols.BLOCK else " "
+    val cursorSymbol = if focus then Symbols.BLOCK else " "
     val limit        = innerWidth - 3
-    val t            = if (cursorIndex == 0 && !focus) "<" + defaultText + ">" else text.value
-    val fg           = if (cursorIndex == 0 && !focus) theme.background else theme.foreground(focus)
+    val t            = if cursorIndex == 0 && !focus then "<" + defaultText + ">" else text.value
+    val fg           = if cursorIndex == 0 && !focus then theme.background else theme.foreground(focus)
     val l            = t.length
     val clippedText  = Drawing.clipText(t, limit, before = true)
     screen.put(0,
                0,
                " " + clippedText + cursorSymbol + " " * (innerWidth - l - 3) + " ",
                foreground = fg,
-               background = if (focus) theme.background(focus) else theme.accent1
+               background = if focus then theme.background(focus) else theme.accent1
     )
   }
 
   override def handleKeypress(keypress: Int): Unit = {
     keypress match {
       case Keys.BACKSPACE =>
-        if (cursorIndex > 0)
+        if cursorIndex > 0 then
           text := text.value.init
       case _ => text := text.value + keypress.toChar
     }

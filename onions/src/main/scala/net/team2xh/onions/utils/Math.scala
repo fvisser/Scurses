@@ -32,10 +32,10 @@ object Math {
     val array = ArrayBuffer.fill[Double](width, height)(0.0)
 
     def add(x0: Int, y0: Int): Unit =
-      for (x <- -kernelRadius to kernelRadius; y <- -kernelRadius to kernelRadius) {
+      for x <- -kernelRadius to kernelRadius; y <- -kernelRadius to kernelRadius do {
         val xx = x0 + x
         val yy = y0 + y
-        if (xx >= 0 && xx < width && yy >= 0 && yy < height) {
+        if xx >= 0 && xx < width && yy >= 0 && yy < height then {
           val v   = simpleGauss2d(x, y, kernelRadius / 2.0)
           val old = array(xx)(yy)
           array(xx).update(yy, old + v)

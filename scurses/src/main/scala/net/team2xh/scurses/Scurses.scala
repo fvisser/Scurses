@@ -57,23 +57,23 @@ class Scurses {
     * @param background Background color code
     */
   def put(x: Int, y: Int, string: String, foreground: Int = -1, background: Int = -1): Unit = {
-    if (outOfBounds(x, y))
+    if outOfBounds(x, y) then
       return
     ec.move(x + offsetX, y + offsetY)
-    if (foreground >= 0) ec.setForeground(foreground)
-    if (background >= 0) ec.setBackground(background)
-    out.write(string.map(b => if (b >= 32) b else '?').getBytes)
+    if foreground >= 0 then ec.setForeground(foreground)
+    if background >= 0 then ec.setBackground(background)
+    out.write(string.map(b => if b >= 32 then b else '?').getBytes)
     ec.stopForeground()
     ec.stopBackground()
   }
 
   def putRichText(x: Int, y: Int, richText: RichText, foreground: Int = -1, background: Int = -1): Unit = {
-    if (outOfBounds(x, y))
+    if outOfBounds(x, y) then
       return
     ec.move(x + offsetX, y + offsetY)
-    if (foreground >= 0) ec.setForeground(foreground)
-    if (background >= 0) ec.setBackground(background)
-    for (instruction <- richText.instructions)
+    if foreground >= 0 then ec.setForeground(foreground)
+    if background >= 0 then ec.setBackground(background)
+    for instruction <- richText.instructions do
       instruction match {
         case Text(text) => out.write(text.getBytes)
         case StartAttribute(attribute) =>
@@ -103,8 +103,8 @@ class Scurses {
             case Underline  => ec.stopUnderline()
             case Blink      => ec.stopBlink()
             case Reverse    => ec.stopReverse()
-            case Foreground => if (foreground >= 0) ec.setForeground(foreground)
-            case Background => if (background >= 0) ec.setBackground(background)
+            case Foreground => if foreground >= 0 then ec.setForeground(foreground)
+            case Background => if background >= 0 then ec.setBackground(background)
             case _          =>
           }
         case ResetAttributes => ec.resetColors()
@@ -171,11 +171,11 @@ class Scurses {
     */
   def keypress(): Int = {
     val n = System.in.read()
-    if (n == Keys.ESC) {
+    if n == Keys.ESC then {
       Thread.sleep(delay)
-      if (System.in.available() != 0) {
+      if System.in.available() != 0 then {
         val k = System.in.read()
-        if (k == 91) {
+        if k == 91 then {
           val o = System.in.read()
           o match {
             case 48 => // Status OK from status, used as a resize signal
@@ -222,7 +222,7 @@ class Scurses {
           resizesInProgress.incrementAndGet()
           new Timer().schedule(new TimerTask {
                                  override def run(): Unit =
-                                   if (resizesInProgress.decrementAndGet() == 0) {
+                                   if resizesInProgress.decrementAndGet() == 0 then {
                                      ec.status()
                                      out.flush()
                                    }
